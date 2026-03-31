@@ -1,0 +1,546 @@
+{
+  "info": {
+    "name": "Audit Logging System API",
+    "description": "Postman collection for testing the Audit Logging System endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": "1"
+    },
+    {
+      "key": "university_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login (Get Auth Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@university.edu\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.data.token);",
+                  "    console.log('Auth token set:', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        {
+          "name": "Get All Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Logs - Filtered by Action",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?action=upload_scores&page=1&limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "upload_scores"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Logs - Filtered by Entity Type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?entityType=result&page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "entityType",
+                  "value": "result"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Logs - Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?startDate=2024-01-01&endDate=2024-12-31&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Logs - Invalid Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?startDate=2024-12-31&endDate=2024-01-01",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-12-31"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-01-01"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Logs - Exceed Limit",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?limit=150",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "150"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Specific Audit Log",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs/1",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Non-existent Audit Log",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs/99999",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs", "99999"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Statistics",
+      "item": [
+        {
+          "name": "Get Audit Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/stats",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Statistics - Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/stats?startDate=2024-01-01&endDate=2024-12-31",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "stats"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Activity",
+      "item": [
+        {
+          "name": "Get User Activity (Own)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/user-activity/{{user_id}}?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "user-activity", "{{user_id}}"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Activity (Other User - Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/user-activity/2?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "user-activity", "2"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Activity (Other User - Non-Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/user-activity/2",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "user-activity", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Export Audit Logs",
+      "item": [
+        {
+          "name": "Export as JSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/export?format=json&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export as CSV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/export?format=csv&action=upload_scores",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "csv"
+                },
+                {
+                  "key": "action",
+                  "value": "upload_scores"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export with Date Filter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/export?format=json&startDate=2024-01-01&endDate=2024-12-31",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Access Without Authentication",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/audit/logs",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"]
+            }
+          }
+        },
+        {
+          "name": "Access Without Admin Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"]
+            },
+            "description": "Use a non-admin token to test role-based access control"
+          }
+        },
+        {
+          "name": "Invalid Parameters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit/logs?page=abc&limit=-1",
+              "host": ["{{base_url}}"],
+              "path": ["audit", "logs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "abc"
+                },
+                {
+                  "key": "limit",
+                  "value": "-1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Generate Test Data",
+      "item": [
+        {
+          "name": "Create Result Submission (to generate audit logs)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": 1,\n  \"semester\": \"fall\",\n  \"academicYear\": 2024\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/results/submissions",
+              "host": ["{{base_url}}"],
+              "path": ["results", "submissions"]
+            }
+          }
+        },
+        {
+          "name": "Upload Scores (to generate audit logs)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scores\": [\n    {\n      \"studentId\": \"STU001\",\n      \"score\": 85,\n      \"midtermScore\": 80,\n      \"finalScore\": 90\n    },\n    {\n      \"studentId\": \"STU002\",\n      \"score\": 92,\n      \"midtermScore\": 88,\n      \"finalScore\": 95\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/results/submissions/1/scores",
+              "host": ["{{base_url}}"],
+              "path": ["results", "submissions", "1", "scores"]
+            }
+          }
+        },
+        {
+          "name": "Submit for Approval (to generate audit logs)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/results/submissions/1/submit",
+              "host": ["{{base_url}}"],
+              "path": ["results", "submissions", "1", "submit"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set default headers for all requests",
+          "pm.request.headers.add({key: 'Content-Type', value: 'application/json'});"
+        ]
+      }
+    }
+  ]
+}
