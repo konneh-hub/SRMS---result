@@ -2,6 +2,15 @@
 
 A multi-tenant Node.js backend application built with Express.js for managing university systems with JWT authentication. This API supports multiple tenants (universities/campuses) with isolated data and provides CRUD operations for universities, students, and user management.
 
+## Repository Layout
+
+The codebase is organized under `backend/`.
+
+- `backend/`: application source, config, Dockerfiles, and package files.
+- `.git/`: Git metadata at repo root.
+
+To work with the app, change into `backend/` before running install/build commands.
+
 ## Features
 
 - **JWT Authentication**: Secure user authentication with role-based access control
@@ -97,6 +106,7 @@ This application follows a **clean architecture** pattern with clear separation 
    ```bash
    git clone <repository-url>
    cd university-backend
+   cd backend
    ```
 
 2. Install dependencies:
